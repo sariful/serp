@@ -1,46 +1,64 @@
 (function () {
     "use strict";
-    // Put all codes here
-    var createError = require('http-errors');
-    var express = require('express');
-    var path = require('path');
-    var cookieParser = require('cookie-parser');
-    var logger = require('morgan');
-    var expHbs = require('express-handlebars');
-
-    var indexRouter = require('./routes/index');
-    var usersRouter = require('./routes/users');
-
-    var app = express();
-
-    // view engine setup
-    // app.engine('hbs', expHbs());
-    // app.set('view engine', 'hbs');
+    const createError = require('http-errors');
+    const express = require('express');
+    const path = require('path');
+    const cookieParser = require('cookie-parser');
+    const expHbs = require('express-handlebars');
+    const db = require("./models");
 
 
+    const app = express();
+
+    /**
+     * 
+     * View engine setup
+     * 
+     */
     app.engine('.hbs', expHbs({
         extname: '.hbs'
     }));
     app.set('view engine', '.hbs');
     app.set('views', path.join(__dirname, 'views'));
+    // end view engine setup
 
-    app.use(logger('dev'));
+    /**
+     * 
+     * express configs
+     * 
+     */
     app.use(express.json());
     app.use(express.urlencoded({
-        extended: false
+        extended: true
     }));
     app.use(cookieParser());
     app.use(express.static(path.join(__dirname, 'public')));
+    // end express configs
 
+
+    /**
+     * 
+     * routing
+     * 
+     */
+    var indexRouter = require('./routes/index');
     app.use('/', indexRouter);
-    app.use('/users', usersRouter);
 
+    var usersRouter = require('./routes/users');
+    app.use('/users', usersRouter);
+    // end routing
+
+
+
+    /**
+     * 
+     * handle error reporting for frontend
+     * 
+     */
     // catch 404 and forward to error handler
     app.use(function (req, res, next) {
         next(createError(404));
     });
-
-    // error handler
     app.use(function (err, req, res, next) {
         // set locals, only providing error in development
         res.locals.message = err.message;
@@ -50,6 +68,12 @@
         res.status(err.status || 500);
         res.render('error');
     });
+    // end error handlings
 
+
+    // sync mysql database
+    db.sequelize.sync();
+
+    // export the app variable for further use
     module.exports = app;
 })();
