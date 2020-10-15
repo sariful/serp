@@ -6,10 +6,11 @@
     const cookieParser = require('cookie-parser');
     const expHbs = require('express-handlebars');
     const db = require("./models");
+    const config = require(__dirname + '/./config/config.json');
 
 
     const app = express();
-
+    
     /**
      * 
      * View engine setup
@@ -41,11 +42,14 @@
      * routing
      * 
      */
-    var indexRouter = require('./routes/index');
+    const indexRouter = require('./routes/index');
     app.use('/', indexRouter);
 
-    var usersRouter = require('./routes/users');
-    app.use('/users', usersRouter);
+    const adminRouter = require('./routes/admin');
+    app.use('/admin', adminRouter);
+
+    const apiRouter = require('./routes/api');
+    app.use('/api', apiRouter);
     // end routing
 
 

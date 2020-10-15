@@ -1,4 +1,7 @@
 {
+    "app": {
+        "port": 4444
+    },
     "development": {
         "username": "root",
         "password": "Zubizi03365656533",
